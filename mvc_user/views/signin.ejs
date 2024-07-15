@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>실습 - 회원</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios@1.7.2/dist/axios.min.js"></script>
+</head>
+<body>
+  <h1>로그인</h1>
+  <form action="" name="form_login">
+    <p>
+      <label for="userid">ID</label>
+      <input type="text" id="userid" name="userid" required>
+    </p>
+    <p>
+      <label for="password">Password</label>
+      <input type="password" id="password" name="pw" required>
+    </p>
+    <button type="button" onclick="login()">Login</button>
+  </form>
+
+  <script>
+    async function login(){
+      const form_login = document.forms['form_login'];
+
+      if(!form_login.checkValidity()){
+        form_login.reportValidity();
+        return;
+      }
+
+      try{
+        let res = await axios({
+          method: 'POST',
+          url: '/user/signin',
+          data: {
+            userid: form_login.userid.value,
+            pw: form_login.pw.value,
+          }
+        })
+
+        console.log(res.data);
+        const {data} = res;
+
+        if(data.isLogin){
+          alert('로그인 성공!');
+
+        }else{
+          alert('로그인 실패!');
+          form_login.reset();
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  </script>
+</body>
+</html>

@@ -34,5 +34,13 @@ exports.get_visitor = (req, res) => {
     console.log('get_visitor Cvisitor.js > ', result);
     res.send(result);
   })
+}
 
+exports.delete_visitor= (req, res) => {
+  console.log(req.body);
+  console.log(req.body.id);
+  Visitor.deleteVisitor(req.body.id, (result) => {
+    console.log('get_visitor Cvisitor.js > ', result);
+    res.send("삭제 성공!!");
+  })
 }

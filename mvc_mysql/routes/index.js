@@ -14,4 +14,7 @@ router.post('/visitor', controller.post_visitor);
 // GET '/visitors'
 router.get('/visitor', controller.get_visitor);
 
+// DELETE '/visitors'
+router.delete('/visitor', controller.delete_visitor);
+
 module.exports = router;

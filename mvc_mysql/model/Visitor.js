@@ -42,3 +42,16 @@ exports.getVisitor = (id, cb) => {
     cb(rows[0]);
   });
 }
+
+// 삭제
+exports.deleteVisitor = (id, cb) => {
+  console.log(id);
+
+  let sql = 'delete from visitor where id = ?';
+  conn.query(sql, [id], (err, rows) => {
+    if (err) throw err;
+
+    console.log('deleteVisitor Visitor.js >', rows);
+    cb(rows);
+  })
+}
