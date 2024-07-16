@@ -16,5 +16,14 @@ router.get('/signin', controller.get_signin);
 // 로그인 요청
 router.post('/signin', controller.post_signin);
 
+// 회원 정보 수정 페이지 요청
+router.post('/profile', controller.post_profile);
+
+// 회원 정보 수정 요청
+router.patch('/profile/edit', controller.edit_profile);
+
+// 회원 정보 삭제
+router.delete('/profile/delete', controller.delete_profile);
+
 
 module.exports = router
