@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('./head') %>
+<body>
+  <h1>회원가입</h1>
+  <form action="" name="form_register">
+    <p>
+      <label for="userid">ID</label>
+      <input type="text" id="userid" name="userid" required>
+    </p>
+    <p>
+      <label for="password">Password</label>
+      <input type="password" id="password" name="pw" required>
+    </p>
+    <p>
+      <label for="nickname">Name</label>
+      <input type="text" id="nickname" name="name" required>
+    </p>
+    <button type="button" onclick="register()">Register</button>
+  </form>
+
+  <p>
+    <a href="/">Home</a>
+    <a href="/signin">로그인</a>
+  </p>
+
+  <script>
+    async function register(){
+      const form = document.forms['form_register'];
+
+      if(!form.checkValidity()){
+        form.reportValidity();
+        return;
+      }
+
+      const res = await axios({
+        method: 'POST',
+        url: '/signup',
+        data: {
+          userid: form.userid.value,
+          pw: form.pw.value,
+          name: form.name.value,
+        }
+      });
+      
+      if (res.data.result){
+        console.log(res.data);
+
+        alert('회원가입 성공!!');
+        document.location.href = '/';
+      }
+    }
+  </script>
+</body>
+</html>

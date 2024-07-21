@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>실습 - 회원</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios@1.7.2/dist/axios.min.js"></script>
+</head>
+<body>
+  <h1>로그인</h1>
+  <!-- 로그인 버튼 클릭하면 성공시 profile.ejs에서 특정 유저 정보를 보여줘야 해서
+      히든으로 userid를 보내줌 -->
+  <!-- 로그인 성공시 프로필 페이지로 이동할 폼 -->
+  <form action="/user/profile" method="POST" name="form_info">
+    <input type="hidden" name="userid">
+  </form>
+
+  <form action="" name="form_login">
+    <p>
+      <label for="userid">ID</label>
+      <input type="text" id="userid" name="userid" required>
+    </p>
+    <p>
+      <label for="password">Password</label>
+      <input type="password" id="password" name="pw" required>
+    </p>
+    <button type="button" onclick="login()">Login</button>
+  </form>
+
+  <p><a href="/user/signup">Register</a></p>
+
+  <script>
+    async function login(){
+      const form_login = document.forms['form_login'];
+
+      if(!form_login.checkValidity()){
+        form_login.reportValidity();
+        return;
+      }
+
+      try{
+        let res = await axios({
+          method: 'POST',
+          url: '/user/signin',
+          data: {
+            userid: form_login.userid.value,
+            pw: form_login.pw.value,
+          }
+        })
+
+        console.log(res.data);
+        const {data} = res;
+
+        if(data.isLogin){
+          alert('로그인 성공!');
+          //profile 페이지 요청 
+          const form_info = document.forms['form_info'];
+          form_info.userid.value = form_login.userid.value;  //아이디 값 저장
+          form_info.submit();
+        }else{
+          alert('로그인 실패!');
+          form_login.reset();
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  </script>
+</body>
+</html>

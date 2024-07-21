@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HOME</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios@1.7.2/dist/axios.min.js"></script>
+</head>
+<body>
+  <form action="" name="visitor-form">
+    <fieldset>
+      <legend>방명록 등록</legend>
+      <p>
+        <input type="text" id="name" placeholder="사용자 이름">
+      </p>
+      <p>
+        <input type="text" id="comment" placeholder="방명록">
+      </p>
+      <div id="button-group">
+        <button type="button" onclick="createVisitor()">등록</button>
+      </div>
+    </fieldset>
+  </form>
+  <br>
+  <table border="1" cellspacing="0">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>작성자</th>
+        <th>방명록</th>
+        <th>수정</th>
+        <th>삭제</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for(let i = 0; i < data.length; i++) { %>
+        <tr id="tr_<%=data[i].id %>">
+          <td><%=data[i].id %></td>
+          <td><%=data[i].name %></td>
+          <td><%=data[i].comment %></td>
+          <td>
+            <button type="button" onclick="editVisitor('<%=data[i].id %>')">수정</button>
+          </td>
+          <td>
+            <button type="button" onclick="deleteVisitor(this, '<%=data[i].id %>')">삭제</button>
+          </td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+
+  <script>
+    const tbody = document.querySelector('tbody');
+    const btnGroup = document.querySelector('#button-gropu');
+
+    //폼의 등록 버튼 클릭
+    function createVisitor(){
+      const form = document.forms['visitor-form'];
+
+      //validation
+      if(form.name.value.length === 0 || form.comment.value.length === 0){
+        alert('이름 또는 방명록을 기입해주세요!!');
+        return;
+      }
+
+      if(form.name.value.length > 10){
+        alert('이름은 10자 미만입니다.');
+        return;
+      }
+
+      axios({
+        method: 'POST',
+        url: '/visitor',
+        data: {
+          name: form.name.value,
+          comment: form.comment.value
+        }
+      }).then((res) => {
+        console.log(res.data);
+        const data = res.data;
+
+        const html = `
+            <tr id="tr_${data.id}">
+              <td>${data.id}</td>
+              <td>${data.name}</td>
+              <td>${data.comment}</td>
+              <td><button type="button" onclick="editVisitor(${data.id})">수정</button></td>
+              <td><button type="button" onclick="deleteVisitor(this, ${data.id})">삭제</button></td>
+            </tr>
+        `
+        // insertAdjacentHTML: 특정 요소에 html 추가
+        tbody.insertAdjacentHTML('beforeend', html);
+        // 입력창 초기회
+        form.reset();
+      })
+    }
+
+    //폼의 수정 버튼 클릭시
+    function editVisitor(id){
+      // form input 값 가져오기
+      axios({
+        method: 'GET',
+        url: `/visitor/${id}`
+      }).then((res) => {
+        console.log('editVisitor get data >', res.data);
+        const { name, comment } = res.data;
+        const form = document.forms['visitor-form'];
+        form.name.value = name;
+        form.comment.value = comment;  
+      })
+
+      // 변경, 취소 버튼 보이기
+      const html = `
+        <button type="button" onclick="editDo(${id})">변경</button>
+        <button type="button" onclick="editCancel()">취소</button>
+      `
+      btnGroup.innerHTML = html;
+    }
+
+    // 수정 -> 변경 버튼 나오면 변경 클릭시
+    function editDo(id){
+      const form = document.forms['visitor-form'];
+      axios({
+        method: 'PUT',
+        url: '/visitor',
+        data: {
+          id: id,
+          name: form.name.value,
+          comment: form.comment.value
+        }
+      }).then((res) => {
+        console.log(res.data);
+
+        const childern = document.querySelector(`#tr_${id}`).children;
+        console.log(childern);
+        childern[1].textContent = form.name.value;
+        childern[2].textContent = form.comment.value;
+
+        //입력창 초기화, 등록 버튼 보이기
+        editCancel();
+      })
+    }
+
+    // 취소 버튼 클릭시 - 초기화, 등록 버튼 보이기
+    function editCancel(){
+      const form = document.forms['visitor-form'];
+      form.reset();
+
+      const html = `<button type="button" onclick="createVisitor()">등록</button>`
+      btnGroup.innerHTML = html;
+    }
+
+    //폼의 삭제 버튼 클릭시
+    function deleteVisitor(obj, id){
+      console.log('obj >', obj);
+      console.log('id >', id);
+
+      if(!confirm('정말 삭제하시겠습니까?')) return;
+
+      axios({
+        method: 'DELETE',
+        url: '/visitor',
+        data: {id: id}
+      }).then((res) => {
+        console.log(res.data);
+
+        //tr 삭제
+        obj.parentElement.parentElement.remove();
+      })
+    }
+  </script>
+</body>
+</html>

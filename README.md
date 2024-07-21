@@ -8,4 +8,7 @@ express framework - mvc 프로젝트 중심
   . npm install mysql
 
 - User CRUD(mvc_user)
+  . 회원 가입
+  . 로그인
+  . 회원 정보(수정, 탈퇴)
 
