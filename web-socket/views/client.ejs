@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <h1>chatting</h1>
+
+  <!-- 채팅 내용 -->
+  <ul></ul>
+
+  <!-- 입력 폼 -->
+  <form action="" id="chat">
+    <p>이름<input type="text" id="name"></p>
+    <p>내용<input type="text" id="message"></p>
+    <button>전송</button>
+  </form>
+
+  <script>
+    // 클라이언트 소켓 생성
+    const socket = new WebSocket('ws://localhost:8000');
+    console.log(socket);
+
+    const chatForm = document.getElementById('chat');
+    const ul = document.querySelector('ul');
+
+    // open 이벤트
+    socket.addEventListener('open', (event) => {
+      console.log('[서버 연결 완료]');
+    })
+
+    // close 이벤트
+    socket.addEventListener('close', (event) => {
+      console.log('[서버 연결 종료]');
+    })
+
+    // error 이벤트
+    socket.addEventListener('error', (event) => {
+      console.log('[에러 발생] :', event.console.error);
+    })
+
+    // message 이벤트
+    socket.addEventListener('message', (event) => {
+      console.log('event >', event);
+      // 웹 소켓 서버에서 응답받은 json 데이터를 js의 객체로 변환 - 프로그래밍 할 수 있음
+      const data = JSON.parse(event.data);
+      const{ name, msg } = data;
+
+      const li = document.createElement('li');
+      li.textContent = `${name}님 - ${msg}`;
+      ul.appendChild(li);
+    })
+
+    // 폼 submit 이벤트
+    chatForm.addEventListener('submit', (event) => {
+      //기본 동작 멈춤(submit 되지 않도록 함)
+      event.preventDefault();
+
+      //input에 입력한 정보를 바탕으로 메시지 데이터 생성
+      const name = chatForm.name.value;
+      const msg = chatForm.message.value;
+      const data = { name, msg };
+      console.log("보내려는 메시지 데이터 >", data);
+
+      // data를 웹 소켓 서버로 전송
+      // 웹 소캣 서버가 데이터를 쉽게 처리할 수 있도록
+      // 웹 소켓 서버가 js언어를 쓰지 않을 수도 있으니
+      // JSON 형식의 텍스트 데이터로 변환해서 웹 서버로 전송
+      console.log('data >', JSON.stringify(data));
+      socket.send(JSON.stringify(data));
+
+      // input 초기화
+      chatForm.reset();
+    })
+  </script>
+</body>
+</html>
