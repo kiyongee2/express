@@ -4,10 +4,11 @@ const session = require('express-session')
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 9000;
+const PORT = process.env.PORT || 8282;
 const db = require('./models')
 
 app.set('view engine', 'ejs')
+app.set('views', './views')
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json()) //db로 보내줌
 app.use(
