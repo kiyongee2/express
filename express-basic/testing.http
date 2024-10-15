@@ -1,0 +1,77 @@
+
+get http://localhost:8000/
+
+###
+get http://localhost:8000/hello
+
+###
+get http://localhost:8000/qs?p1=aa&p2=bb
+
+###
+post http://localhost:8000/hello
+
+# 서버(index.js)에 데이터 보냄
+###
+post http://localhost:8000/post-req
+# json 형식으로 요청
+Content-Type: application/json; charset=UTF-8
+# 한 줄 띄어야 함 - 주의!!!!!!!!!!!!!!
+
+{
+    "name": "이강인",
+    "age": 23
+}
+
+# 서버(index.js)에 데이터 보냄
+# 한 개씩 요청해야 함
+###
+post http://localhost:8000/save
+Content-Type: application/json; charset=UTF-8
+
+# {
+#     "name": "대한민국",
+#     "capital": "서울",
+#     "population": 500000000
+# }
+
+# {
+#     "name": "프랑스",
+#     "capital": "파리",
+#     "population": 70000000
+# }
+
+# {
+#     "name": "호주",
+#     "capital": "캔버라",
+#     "population": 25000000
+# }
+
+{
+    "name": "미국",
+    "capital": "워싱턴DC",
+    "population": 300000000
+}
+
+//목록 보기 요청
+###
+get http://localhost:8000/list
+
+// 상세 보기 요청
+###
+get http://localhost:8000/3
+
+//수정 요청
+###
+put http://localhost:8000/1
+Content-Type: application/json; charset=UTF-8
+
+{
+    "id": 1,
+    "name": "대한민국",
+    "capital": "서울",
+    "population": 52000000
+}
+
+//삭제 요청
+###
+delete http://localhost:8000/4
